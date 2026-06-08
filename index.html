@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1 Hour of Silence</title>
+  <link rel="stylesheet" href="style.css" />
+
+<body>
+  <div id="app">
+    <div id="scene">
+      <div id="title-text">1 Hour of Silence</div>
+      <div id="subtitle-text">occasionally interrupted by...</div>
+      <div id="timer-display">1:00:00</div>
+      <div id="progress-track"><div id="progress-fill"></div></div>
+      <div id="ctrl-row">
+        <button class="play-btn" id="btn-play" onclick="togglePlay()">Play</button>
+        <button class="reset-btn" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+
+    <div id="bottom-section">
+
+      <div id="section-label">Sounds — toggle to arm</div>
+      <div id="sounds-grid"></div>
+
+      <div id="log- area">
+        <div id="log-label">Event log</div>
+        <div id="log-entries"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

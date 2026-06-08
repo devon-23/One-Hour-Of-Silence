@@ -1,0 +1,459 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  #app {
+    background: #faf9f6;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    color: #2d2d2d;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #scene {
+    position: relative;
+    width: 100%;
+    min-height: 340px;
+    background: #f5f3ee;
+    border-bottom: 1px solid #e8e4dc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    overflow: hidden;
+  }
+
+  .scene-emoji-float {
+    position: absolute;
+    font-size: 4.5rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.08s ease;
+    z-index: 10;
+    line-height: 1;
+  }
+
+  .scene-emoji-float.visible { opacity: 1; }
+  .scene-emoji-float.fading { opacity: 0; transition: opacity 0.4s ease; }
+
+  #title-text {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #5a5549;
+    text-align: center;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.01em;
+  }
+
+  #subtitle-text {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #a09890;
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  #timer-display {
+    font-family: 'Lora', serif;
+    font-size: 4rem;
+    font-weight: 400;
+    color: #3d3830;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  #timer-display.ticking { color: #2d2820; }
+
+  #progress-track {
+    width: 240px;
+    height: 3px;
+    background: #e2ddd5;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  #progress-fill {
+    height: 100%;
+    background: #b5a898;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1s linear;
+  }
+
+  #ctrl-row { display: flex; gap: 10px; }
+
+  .play-btn {
+    background: #3d3830;
+    color: #f5f0e8;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 9px 24px;
+    border-radius: 100px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .play-btn:hover { background: #2a261f; }
+  .play-btn:active { transform: scale(0.97); }
+
+  .reset-btn {
+    background: transparent;
+    color: #9a9080;
+    border: 1px solid #d8d0c4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    padding: 9px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .reset-btn:hover { border-color: #a09080; color: #5a5449; }
+
+  #bottom-section { padding: 2rem 1.5rem; background: #faf9f6; }
+
+  #section-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #b0a898;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  #sounds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .sound-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #ede8e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+
+  .sound-pill:hover { border-color: #c8bfb2; background: #fdfcf9; }
+  .sound-pill.active { border-color: #b5a898; background: #faf7f2; }
+  .sound-pill.active .pill-name { color: #3d3830; }
+
+  .pill-emoji { font-size: 1.3rem; line-height: 1; flex-shrink: 0; }
+  .pill-name { font-size: 0.8rem; color: #7a7268; font-weight: 400; flex: 1; }
+  .pill-range { font-size: 0.68rem; color: #c0b8ae; white-space: nowrap; }
+
+  .pill-toggle { width: 30px; height: 16px; position: relative; flex-shrink: 0; }
+  .pill-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+  .tog-track {
+    position: absolute;
+    inset: 0;
+    background: #e8e2d8;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .tog-track::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 2px;
+    left: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .pill-toggle input:checked + .tog-track { background: #8a7d6e; }
+  .pill-toggle input:checked + .tog-track::after { transform: translateX(14px); }
+
+  #log-area { border-top: 1px solid #ede8e0; padding-top: 1.2rem; }
+
+  #log-label {
+    font-size: 0.68rem;
+    color: #c0b8ae;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .log-entry {
+    font-size: 0.78rem;
+    color: #a09888;
+    padding: 3px 0;
+    display: flex;
+    gap: 10px;
+    animation: slideIn 0.2s ease;
+  }
+
+  .log-time { color: #c8c0b5; font-variant-numeric: tabular-nums; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  #vibe-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.75rem;
+    color: #a09888;
+  }
+
+  #vibe-dots { display: flex; gap: 4px; }
+
+  .vibe-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #e0d8ce;
+    transition: background 0.3s;
+  }
+
+  .vibe-dot.on { background: #8a7d6e; }
+</style>
+
+<div id="app">
+  <div id="scene">
+    <div id="title-text">1 Hour of Silence</div>
+    <div id="subtitle-text">occasionally interrupted by...</div>
+    <div id="timer-display">1:00:00</div>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+    <div id="ctrl-row">
+      <button class="play-btn" id="btn-play" onclick="togglePlay()">Play</button>
+      <button class="reset-btn" onclick="resetTimer()">Reset</button>
+    </div>
+  </div>
+
+  <div id="bottom-section">
+    <div id="vibe-bar">
+      <div id="vibe-dots"></div>
+      <span id="vibe-text">no sounds armed</span>
+    </div>
+    <div id="section-label">Sounds — toggle to arm</div>
+    <div id="sounds-grid"></div>
+    <div id="log-area">
+      <div id="log-label">Event log</div>
+      <div id="log-entries"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TOTAL = 3600;
+let elapsed = 0;
+let running = false;
+let started = false;
+let mainInterval = null;
+
+const SOUNDS = [
+  { id:'amongus',   name:'among us',       emoji:'🔴', file:'amongus.mp3',    min:30, max:160 },
+  { id:'bruh',      name:'bruh',           emoji:'😐', file:'bruh.mp3',       min:20, max:120 },
+  { id:'faa',       name:'FAAA',           emoji:'😱', file:'FAAA.mp3',       min:25, max:150 },
+  { id:'fart',      name:'fart',           emoji:'💨', file:'fart.mp3',       min:15, max:80  },
+  { id:'lego',      name:'lego',           emoji:'🧱', file:'lego.mp3',       min:20, max:100 },
+  { id:'pipe',      name:'metal pipe',     emoji:'🔧', file:'metalpipe.mp3',  min:20, max:120 },
+  { id:'oof',       name:'oof',            emoji:'💀', file:'oof.mp3',        min:15, max:90  },
+  { id:'quack',     name:'quack',          emoji:'🦆', file:'quack.mp3',      min:20, max:100 },
+  { id:'reverb',    name:'reverb',         emoji:'🌀', file:'reverb.mp3',     min:30, max:180 },
+  { id:'villager',  name:'villager',       emoji:'🧑‍🌾', file:'villager.mp3',  min:25, max:140 },
+  { id:'vine',      name:'vine boom',      emoji:'💥', file:'vine.mp3',       min:25, max:150 },
+  { id:'wrong',     name:'wrong',          emoji:'❌', file:'wrong.mp3',      min:30, max:160 },
+];
+
+function playSound(file) {
+  const audio = new Audio(`media/${file}`);
+  audio.volume = 1.0;
+  audio.play().catch(() => {});
+}
+
+const activeTimers = {};
+const soundStates = {};
+
+function scheduleNext(id) {
+  const s = SOUNDS.find(x => x.id === id);
+  if (!s || !soundStates[id] || !running) return;
+  const delay = s.min + Math.random() * (s.max - s.min);
+  activeTimers[id] = setTimeout(() => {
+    if (soundStates[id] && running) {
+      fire(id);
+      scheduleNext(id);
+    }
+  }, delay * 1000);
+}
+
+function clearSoundTimer(id) {
+  if (activeTimers[id]) { clearTimeout(activeTimers[id]); delete activeTimers[id]; }
+}
+
+function fire(id) {
+  const s = SOUNDS.find(x => x.id === id);
+  if (!s) return;
+  playSound(s.file);
+  spawnFloatingEmoji(s.emoji);
+  addLog(s.name, s.emoji);
+}
+
+function spawnFloatingEmoji(emoji) {
+  const scene = document.getElementById('scene');
+  const w = scene.offsetWidth;
+  const h = scene.offsetHeight;
+  const el = document.createElement('div');
+  el.className = 'scene-emoji-float';
+  el.textContent = emoji;
+  const margin = 70;
+  el.style.left = (margin + Math.random() * (w - margin * 2)) + 'px';
+  el.style.top  = (margin + Math.random() * (h - margin * 2)) + 'px';
+  scene.appendChild(el);
+  requestAnimationFrame(() => {
+    el.classList.add('visible');
+    setTimeout(() => {
+      el.classList.add('fading');
+      setTimeout(() => el.remove(), 450);
+    }, 550);
+  });
+}
+
+function addLog(name, emoji) {
+  const log = document.getElementById('log-entries');
+  const el = document.createElement('div');
+  el.className = 'log-entry';
+  el.innerHTML = `<span class="log-time">${formatTime(elapsed)}</span><span>${emoji} ${name}</span>`;
+  log.prepend(el);
+  if (log.children.length > 12) log.removeChild(log.lastChild);
+}
+
+function formatTime(s) {
+  const rem = Math.max(0, TOTAL - s);
+  const h = Math.floor(rem / 3600);
+  const m = Math.floor((rem % 3600) / 60);
+  const sec = rem % 60;
+  return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function updateDisplay() {
+  document.getElementById('timer-display').textContent = formatTime(elapsed);
+  document.getElementById('progress-fill').style.width = ((elapsed / TOTAL) * 100) + '%';
+}
+
+function startTimer() {
+  started = true;
+  running = true;
+  document.getElementById('btn-play').textContent = 'Pause';
+  document.getElementById('timer-display').classList.add('ticking');
+  mainInterval = setInterval(() => {
+    elapsed++;
+    updateDisplay();
+    if (elapsed >= TOTAL) resetTimer();
+  }, 1000);
+  SOUNDS.forEach(s => { if (soundStates[s.id] && !activeTimers[s.id]) scheduleNext(s.id); });
+}
+
+function togglePlay() {
+  if (!started) { startTimer(); return; }
+  if (running) {
+    running = false;
+    clearInterval(mainInterval); mainInterval = null;
+    document.getElementById('btn-play').textContent = 'Play';
+    document.getElementById('timer-display').classList.remove('ticking');
+    SOUNDS.forEach(s => clearSoundTimer(s.id));
+  } else {
+    running = true;
+    document.getElementById('btn-play').textContent = 'Pause';
+    document.getElementById('timer-display').classList.add('ticking');
+    mainInterval = setInterval(() => {
+      elapsed++;
+      updateDisplay();
+      if (elapsed >= TOTAL) resetTimer();
+    }, 1000);
+    SOUNDS.forEach(s => { if (soundStates[s.id]) scheduleNext(s.id); });
+  }
+}
+
+function resetTimer() {
+  running = false; started = false;
+  clearInterval(mainInterval); mainInterval = null;
+  elapsed = 0;
+  SOUNDS.forEach(s => clearSoundTimer(s.id));
+  updateDisplay();
+  document.getElementById('btn-play').textContent = 'Play';
+  document.getElementById('timer-display').classList.remove('ticking');
+}
+
+function toggleSound(id, checked) {
+  soundStates[id] = checked;
+  const card = document.querySelector(`[data-id="${id}"]`);
+  if (card) card.classList.toggle('active', checked);
+
+  if (checked) {
+    const s = SOUNDS.find(x => x.id === id);
+    playSound(s.file);
+    spawnFloatingEmoji(s.emoji);
+    addLog(s.name + ' (armed)', s.emoji);
+    if (!started) startTimer();
+    else if (running && !activeTimers[id]) scheduleNext(id);
+  } else {
+    clearSoundTimer(id);
+  }
+  updateVibe();
+}
+
+function updateVibe() {
+  const count = Object.values(soundStates).filter(Boolean).length;
+  const dots = document.getElementById('vibe-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < 12; i++) {
+    const d = document.createElement('div');
+    d.className = 'vibe-dot' + (i < count ? ' on' : '');
+    dots.appendChild(d);
+  }
+  const labels = ['no sounds armed','barely a disturbance','slightly disrupted','getting interesting','chaotic neutral','becoming a problem','why would you do this','genuine sensory chaos','you asked for this','total pandemonium','absolute disaster','what have you done'];
+  document.getElementById('vibe-text').textContent = labels[Math.min(count, labels.length - 1)];
+}
+
+function buildGrid() {
+  const grid = document.getElementById('sounds-grid');
+  SOUNDS.forEach(s => {
+    const pill = document.createElement('div');
+    pill.className = 'sound-pill';
+    pill.dataset.id = s.id;
+    pill.innerHTML = `
+      <span class="pill-emoji">${s.emoji}</span>
+      <span class="pill-name">${s.name}</span>
+      <span class="pill-range">${s.min}–${s.max}s</span>
+      <label class="pill-toggle" title="arm ${s.name}">
+        <input type="checkbox" onchange="toggleSound('${s.id}', this.checked)">
+        <div class="tog-track"></div>
+      </label>
+    `;
+    grid.appendChild(pill);
+  });
+}
+
+buildGrid();
+updateDisplay();
+updateVibe();
+</script>
