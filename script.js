@@ -1,4 +1,4 @@
-const TOTAL = 3600; //3600
+const TOTAL = 3600;
 let elapsed = 0;
 let running = false;
 let started = false;
@@ -103,16 +103,13 @@ function updateDisplay() {
 function timerOver(totalInt) {
     const end = document.getElementById('ending-grid');
     end.innerHTML = '';
-
     const endDiv = document.createElement('div');
     endDiv.className = 'ending-screen';
-
     endDiv.innerHTML = `
         <h1>Session Ended</h1>
         <p>You were interrupted ${totalInt} times.</p>
         <button class="reset-btn" onclick="removeEnding()">Reset</button>
     `;
-
     end.appendChild(endDiv);
 }
 
