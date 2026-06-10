@@ -3,6 +3,7 @@ let elapsed = 0;
 let running = false;
 let started = false;
 let mainInterval = null;
+let totalInt = 0;
 
 const SOUNDS = [
   { id:'amongus',   name:'among us',       emoji:'imposter.gif', file:'amongus.mp3',    min:30, max:160 },
@@ -75,6 +76,7 @@ function spawnFloatingEmoji(emoji) {
 function addLog(name, emoji) {
   const log = document.getElementById('log-entries');
   const el = document.createElement('div');
+  totalInt++;
   el.className = 'log-entry';
   el.innerHTML = `<span class="log-time">${formatTime(elapsed)}</span><span>${name}</span>`;
   log.prepend(el);
@@ -92,6 +94,23 @@ function formatTime(s) {
 function updateDisplay() {
   document.getElementById('timer-display').textContent = formatTime(elapsed);
   document.getElementById('progress-fill').style.width = ((elapsed / TOTAL) * 100) + '%';
+  
+  if (document.getElementById('progress-fill').style.width == '100%') {
+	timerOver();
+  }
+}
+
+function timerOver(totalInt) {
+    const end = document.getElementById('ending-grid');
+    end.innerHTML = '';
+    const endDiv = document.createElement('div');
+    endDiv.className = 'ending-screen';
+
+    endDiv.innerHTML = `
+        <h1>Session Ended</h1>
+        <p>You were interrupted ${totalInt} times.</p>
+    `;
+    end.appendChild(endDiv);
 }
 
 function startTimer() {
@@ -128,7 +147,18 @@ function togglePlay() {
   }
 }
 
+function toggleOnOff(checked) {
+	const master = document.activeElement;
+	document.querySelectorAll('.pill-toggle input[type="checkbox"]').forEach(cb => {
+	    if (cb !== master) {
+	        cb.checked = checked;
+	        cb.dispatchEvent(new Event('change'));
+	    }
+	});
+}
+
 function resetTimer() {
+  totalInt = 0;
   running = false; started = false;
   clearInterval(mainInterval); mainInterval = null;
   elapsed = 0;

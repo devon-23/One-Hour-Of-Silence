@@ -21,7 +21,13 @@
 
     <div id="bottom-section">
 
-      <div id="section-label">Sounds — toggle to arm</div>
+      <div id="section-label">Sounds — toggle to arm<br>
+		  Toggle all on/off
+		  <label class="pill-toggle" title="toggle">
+		          <input type="checkbox" onchange="toggleOnOff(this.checked)">
+		          <div class="tog-track"></div>
+		        </label>
+	  </div>
       <div id="sounds-grid"></div>
 
       <div id="log- area">
