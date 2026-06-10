@@ -284,9 +284,28 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: #222;
-      color: #fff;
-      padding: 30px;
+      color: #3d3830;
+      padding: 70px;
       border-radius: 12px;
       text-align: center;
       z-index: 1000;
   }
+  
+  .ending-screen h1 {
+      font-family: 'Lora', serif;
+      font-size: 2.6rem;
+      font-weight: 400;
+      color: #faf9f6;
+      text-align: center;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.01em;
+    }
+
+.ending-screen p {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 1.85rem;
+      color: #faf9f6;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }

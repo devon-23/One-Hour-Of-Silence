@@ -1,4 +1,4 @@
-const TOTAL = 3600;
+const TOTAL = 3600; //3600
 let elapsed = 0;
 let running = false;
 let started = false;
@@ -96,20 +96,23 @@ function updateDisplay() {
   document.getElementById('progress-fill').style.width = ((elapsed / TOTAL) * 100) + '%';
   
   if (document.getElementById('progress-fill').style.width == '100%') {
-	timerOver();
+	timerOver(totalInt);
   }
 }
 
 function timerOver(totalInt) {
     const end = document.getElementById('ending-grid');
     end.innerHTML = '';
+
     const endDiv = document.createElement('div');
     endDiv.className = 'ending-screen';
 
     endDiv.innerHTML = `
         <h1>Session Ended</h1>
         <p>You were interrupted ${totalInt} times.</p>
+        <button class="reset-btn" onclick="removeEnding()">Reset</button>
     `;
+
     end.appendChild(endDiv);
 }
 
@@ -157,6 +160,12 @@ function toggleOnOff(checked) {
 	});
 }
 
+function removeEnding() {
+	const end = document.getElementById('ending-grid');
+	end.innerHTML = '';
+	startTimer()
+}
+
 function resetTimer() {
   totalInt = 0;
   running = false; started = false;
@@ -177,7 +186,6 @@ function toggleSound(id, checked) {
     const s = SOUNDS.find(x => x.id === id);
     playSound(s.file);
     spawnFloatingEmoji(s.emoji);
-    addLog(s.name + ' (armed)', s.emoji);
     if (!started) startTimer();
     else if (running && !activeTimers[id]) scheduleNext(id);
   } else {
