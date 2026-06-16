@@ -1,4 +1,4 @@
-const TOTAL = 3600;
+let TOTAL = 3600;
 let elapsed = 0;
 let running = false;
 let started = false;
@@ -24,6 +24,24 @@ function playSound(file) {
   const audio = new Audio(`media/${file}`);
   audio.volume = 1.0;
   audio.play().catch(() => {});
+}
+
+function customLength(length) {
+	TOTAL = length * 60;
+	document.getElementById("timer-display").textContent = formatTime(TOTAL);
+	togglePlay();
+}
+
+function formatTime(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return (
+        hours.toString().padStart(1, '0') + ":" +
+        minutes.toString().padStart(2, '0') + ":" +
+        seconds.toString().padStart(2, '0')
+    );
 }
 
 const activeTimers = {};
@@ -207,6 +225,17 @@ function buildGrid() {
     grid.appendChild(pill);
   });
 }
+
+
+document.getElementById("custom-input").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+		const length = parseInt(this.value); 
+        if (!isNaN(length)) {
+            customLength(length);
+        }
+    }
+});
+
 
 buildGrid();
 updateDisplay();

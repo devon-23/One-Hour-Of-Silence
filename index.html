@@ -15,7 +15,10 @@
       <div id="progress-track"><div id="progress-fill"></div></div>
       <div id="ctrl-row">
         <button class="play-btn" id="btn-play" onclick="togglePlay()">Play</button>
-        <button class="reset-btn" onclick="resetTimer()">Reset</button>
+		<div class="custom-time">
+			<input type="number" id="custom-input" name="length" min="1" max="100" placeholder="custom minutes">
+		</div>
+        <button class="play-btn" onclick="resetTimer()">Reset</button>
       </div>
     </div>
 
