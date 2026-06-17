@@ -132,6 +132,34 @@
 
   .reset-btn:hover { border-color: #a09080; color: #5a5449; }
 
+  .custom-time {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  #custom-input {
+    background: transparent;
+    color: #5a5449;
+    border: 1px solid #d8d0c4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    padding: 9px 14px;
+    border-radius: 100px;
+    width: 90px;
+    outline: none;
+    letter-spacing: 0.05em;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  #custom-input::placeholder {
+    color: #b5aa9a;
+  }
+
+  #custom-input:focus {
+    border-color: #a09080;
+  }
+  
   #bottom-section {
     padding: 2rem 1.5rem;
     background: #faf9f6;
@@ -277,27 +305,35 @@
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: none; }
   }
-
-  #vibe-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 1.5rem;
-    font-size: 0.75rem;
-    color: #a09888;
+  
+  .ending-screen {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      color: #3d3830;
+      padding: 70px;
+      border-radius: 12px;
+      text-align: center;
+      z-index: 1000;
   }
+  
+  .ending-screen h1 {
+      font-family: 'Lora', serif;
+      font-size: 2.6rem;
+      font-weight: 400;
+      color: #faf9f6;
+      text-align: center;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.01em;
+    }
 
-  #vibe-dots {
-    display: flex;
-    gap: 4px;
-  }
-
-  .vibe-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #e0d8ce;
-    transition: background 0.3s;
-  }
-
-  .vibe-dot.on { background: #8a7d6e; }
+.ending-screen p {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 1.85rem;
+      color: #faf9f6;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }

@@ -1,8 +1,9 @@
-const TOTAL = 3600;
+let TOTAL = 3600;
 let elapsed = 0;
 let running = false;
 let started = false;
 let mainInterval = null;
+let totalInt = 0;
 
 const SOUNDS = [
   { id:'amongus',   name:'among us',       emoji:'imposter.gif', file:'amongus.mp3',    min:30, max:160 },
@@ -28,6 +29,24 @@ function playSound(file) {
   const audio = new Audio(`media/${file}`);
   audio.volume = 1.0;
   audio.play().catch(() => {});
+}
+
+function customLength(length) {
+	TOTAL = length * 60;
+	document.getElementById("timer-display").textContent = formatTime(TOTAL);
+	togglePlay();
+}
+
+function formatTime(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return (
+        hours.toString().padStart(1, '0') + ":" +
+        minutes.toString().padStart(2, '0') + ":" +
+        seconds.toString().padStart(2, '0')
+    );
 }
 
 const activeTimers = {};
@@ -90,6 +109,7 @@ function spawnFloatingEmoji(emoji) {
 function addLog(name, emoji) {
   const log = document.getElementById('log-entries');
   const el = document.createElement('div');
+  totalInt++;
   el.className = 'log-entry';
   el.innerHTML = `<span class="log-time">${formatTime(elapsed)}</span><span>${name}</span>`;
   log.prepend(el);
@@ -107,6 +127,23 @@ function formatTime(s) {
 function updateDisplay() {
   document.getElementById('timer-display').textContent = formatTime(elapsed);
   document.getElementById('progress-fill').style.width = ((elapsed / TOTAL) * 100) + '%';
+  
+  if (document.getElementById('progress-fill').style.width == '100%') {
+	timerOver(totalInt);
+  }
+}
+
+function timerOver(totalInt) {
+    const end = document.getElementById('ending-grid');
+    end.innerHTML = '';
+    const endDiv = document.createElement('div');
+    endDiv.className = 'ending-screen';
+    endDiv.innerHTML = `
+        <h1>Session Ended</h1>
+        <p>You were interrupted ${totalInt} times.</p>
+        <button class="reset-btn" onclick="removeEnding()">Reset</button>
+    `;
+    end.appendChild(endDiv);
 }
 
 function startTimer() {
@@ -143,7 +180,24 @@ function togglePlay() {
   }
 }
 
+function toggleOnOff(checked) {
+	const master = document.activeElement;
+	document.querySelectorAll('.pill-toggle input[type="checkbox"]').forEach(cb => {
+	    if (cb !== master) {
+	        cb.checked = checked;
+	        cb.dispatchEvent(new Event('change'));
+	    }
+	});
+}
+
+function removeEnding() {
+	const end = document.getElementById('ending-grid');
+	end.innerHTML = '';
+	startTimer()
+}
+
 function resetTimer() {
+  totalInt = 0;
   running = false; started = false;
   clearInterval(mainInterval); mainInterval = null;
   elapsed = 0;
@@ -162,7 +216,6 @@ function toggleSound(id, checked) {
     const s = SOUNDS.find(x => x.id === id);
     playSound(s.file);
     spawnFloatingEmoji(s.emoji);
-    addLog(s.name + ' (armed)', s.emoji);
     if (!started) startTimer();
     else if (running && !activeTimers[id]) scheduleNext(id);
   } else {
@@ -187,6 +240,17 @@ function buildGrid() {
     grid.appendChild(pill);
   });
 }
+
+
+document.getElementById("custom-input").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+		const length = parseInt(this.value); 
+        if (!isNaN(length)) {
+            customLength(length);
+        }
+    }
+});
+
 
 buildGrid();
 updateDisplay();
