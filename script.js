@@ -8,15 +8,20 @@ const SOUNDS = [
   { id:'amongus',   name:'among us',       emoji:'imposter.gif', file:'amongus.mp3',    min:30, max:160 },
   { id:'bruh',      name:'bruh',           emoji:'rock.gif', file:'bruh.mp3',       min:20, max:120 },
   { id:'faa',       name:'FAAA',           emoji:'faaa.gif', file:'FAAA.mp3',       min:25, max:150 },
-  { id:'fart',      name:'fart',           emoji:'fart.gif', file:'fart.mp3',       min:15, max:80  },
+  { id:'fart',      name:'fart',           emoji:['fart.gif', 'smells-bad-phillip-blake.gif', 'spongebob-stink.gif', 'stink-alert.gif' ], file:'fart.mp3',       min:15, max:80  },
   { id:'lego',      name:'lego',           emoji:'broken.gif', file:'lego.mp3',       min:20, max:100 },
   { id:'pipe',      name:'metal pipe',     emoji:'pipe.gif', file:'metalpipe.mp3',  min:20, max:120 },
   { id:'oof',       name:'oof',            emoji:'hurt.gif', file:'oof.mp3',        min:15, max:90  },
   { id:'quack',     name:'quack',          emoji:'duck.gif', file:'quack.mp3',      min:20, max:100 },
-  { id:'reverb',    name:'reverb',         emoji:'fart.gif', file:'reverb.mp3',     min:30, max:180 },
+  { id:'reverb',    name:'reverb',         emoji:['fart.gif', 'smells-bad-phillip-blake.gif', 'spongebob-stink.gif', 'stink-alert.gif' ], file:'reverb.mp3',     min:30, max:180 },
   { id:'villager',  name:'villager',       emoji:'hmmm.gif', file:'villager.mp3',  min:25, max:140 },
   { id:'vine',      name:'vine boom',      emoji:'rock.gif', file:'vine.mp3',       min:25, max:150 },
   { id:'wrong',     name:'wrong',          emoji:'lie.gif', file:'wrong.mp3',      min:30, max:160 },
+  { id:'scuba',     name:'scuba',          emoji:'scuba.gif', file:'scuba.mp3',      min:20, max:120 },
+  { id:'hallway',   name:'hallway',        emoji:'hallway.gif', file:'hallway.mp3',    min:30, max:180 },   
+  { id:'har',       name:'har',            emoji:'har.gif', file:'har.mp3',        min:20, max:120 },
+  { id: 'dexter',   name: 'dexter',        emoji:['dexter.gif', 'dexter2.gif', 'dexter3.gif', 'dexter4.gif', 'dexter5.gif' ], file:'dexter.mp3',     min:20, max:120 },
+  { id: 'huh',      name: 'huh',           emoji:'huh.gif', file:'huh.mp3',         min:20, max:120 },
 ];
 
 function playSound(file) {
@@ -52,19 +57,29 @@ function fire(id) {
   addLog(s.name, s.emoji);
 }
 
+function getRandomEmoji(emoji) {
+  if (Array.isArray(emoji)) {
+    return emoji[Math.floor(Math.random() * emoji.length)];
+  }
+  return emoji;
+}
+
 function spawnFloatingEmoji(emoji) {
+  const selectedEmoji = getRandomEmoji(emoji);
   const scene = document.getElementById('scene');
   const w = scene.offsetWidth;
   const h = scene.offsetHeight;
   const el = document.createElement('img');
   el.className = 'scene-emoji-float';
-  el.src = 'media/' + emoji;
+  el.src = 'media/' + selectedEmoji;
   const margin = 70;
   el.style.left = (margin + Math.random() * (w - margin * 2)) + 'px';
-  el.style.top  = (margin + Math.random() * (h - margin * 2)) + 'px';
+  el.style.top = (margin + Math.random() * (h - margin * 2)) + 'px';
+
   scene.appendChild(el);
   requestAnimationFrame(() => {
     el.classList.add('visible');
+
     setTimeout(() => {
       el.classList.add('fading');
       setTimeout(() => el.remove(), 1000);
